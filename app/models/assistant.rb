@@ -21,9 +21,9 @@ class Assistant < ActiveRecord::Base
       followers = User.find(user_id).followers
       followers.each do |follower|
         Feed.create(
-          user_id: follower.id,
-          event_id: event_id,
-          feed_creator_id: user_id
+          user: follower,
+          event: event,
+          feed_creator: user
         ) 
     	end
     end
@@ -32,9 +32,9 @@ class Assistant < ActiveRecord::Base
       followers = User.find(user_id).followers
       followers.each do |follower|
         Feed.find_by(
-          user_id: follower.id,
-          event_id: event_id,
-          feed_creator_id: user_id
+          user: follower,
+          event: event,
+          feed_creator: user
         ).destroy
       end
     end

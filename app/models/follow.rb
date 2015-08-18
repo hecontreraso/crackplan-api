@@ -36,19 +36,15 @@ class Follow < ActiveRecord::Base
     end
 
     def delete_feeds
-        Feed.where(
-          user_id: follower.id,
-          feed_creator_id: followed.id
-        ).delete_all
+      Feed.where(user: follower, feed_creator: followed).delete_all
     end
 
     def delete_assistances
       if followed.privacy.eql?("private")
         user = User.find(follower.id)
-        events = user.events.where(creator_id: followed.id)
+        events = user.events.where(creator: followed)
         events.each do |event|
-          logger.debug "#{follower.id}, #{event.id}"
-          Assistant.find_by(user_id: follower.id, event_id: event.id).delete
+          Assistant.find_by(user: follower, event: event).delete
         end
       end
     end

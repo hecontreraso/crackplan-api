@@ -58,33 +58,8 @@ class User < ActiveRecord::Base
 
   #TODO FIX THIS ACCESOR AND MAKE ACTIVERECORD WORK
   def followers
-    follower_ids = []
-    Follow.where(followed_id: id, status: :following).each do |follow|
-      follower_ids << follow.follower_id
-    end
+    follower_ids = Follow.where(followed: self, status: :following).collect(&:follower_id)
     User.where(id: follower_ids)
-  end
-
-  def follow_requests
-    request_ids = []
-    Follow.where(followed_id: id, status: :requested).each do |follow|
-      request_ids << follow.follower_id
-    end
-    User.where(id: request_ids)
-  end
-
-  def future_events
-    future_ev = []
-    pre_future_events = events.where("date >= ?", Date.today)
-    pre_future_events.each do |event| 
-      future_ev << event if (event.date > Date.today || (event.date.eql?(Date.today) && event.time > Time.now) )        
-    end
-    future_ev
-  end
-
-  # Returns true if the current user is following the other user.
-  def is_going_to?(event)
-  	events.include?(event)
   end
 
   # TODO ver si puedo pasar los labels a angular 
@@ -93,109 +68,57 @@ class User < ActiveRecord::Base
     relationship.nil? ? "Join" : "Going"
   end
 
-  def get_relationship_label(other_user)
-    relationship = Follow.find_by(follower_id: id, followed_id: other_user.id)
-    if relationship.nil?
-      return "follow"
-    else
-      return relationship.status
-    end
+  def public_or_following_creator?(event)
+    following?(event.creator) || event.creator.is_public?
   end
 
-  # TODO ver si puedo mover estas validaciones al controller y dejarlo sencillo
-  # Request to join or quit from an event
-  def toggle_assistance(event)
-    if is_going_to?(event)
-      Assistant.find_by(event_id: event.id, user_id: id).destroy
-      return "Join"
-    else
-      if event.creator.is_public_profile?
-        Assistant.create(event_id: event.id, user_id: id)
-        return "Going"
-      else
-        if following?(event.creator)
-          Assistant.create(event_id: event.id, user_id: id)
-          return "Going"
-        else
-          return "Not permitted"
-        end
-      end
-    end
-  end 
-
-  # TODO ver si puedo mover estas validaciones al controller y dejarlo sencillo
-  # Attempts to follow or unfollow
-  def toggle_follow(other_user)
-    relationship = Follow.find_by(follower_id: id, followed_id: other_user.id)
-
-    if relationship.nil? && other_user.is_public_profile?
-      Follow.create(follower_id: id, followed_id: other_user.id, status: :following)
-      return "following" 
-
-    elsif relationship.nil? && other_user.is_private_profile?
-      Follow.create(follower_id: id, followed_id: other_user.id, status: :requested)
-      return "requested"
-
-    elsif relationship.status.eql?("requested") || relationship.status.eql?("following")
-      relationship.destroy
-      return "follow"
-
-    elsif relationship.status.eql?("blocked")
-      return "user_is_blocked"
-    end
+  def follow_requests
+    Follow.where(followed: self, status: :requested).collect(&:follower)
   end
 
-  # TODO ver si puedo mover estas validaciones al controller y dejarlo sencillo
-  # Attempts to block or unblock
-  def toggle_block(other_user)
-    relationship = Follow.find_by(follower_id: id, followed_id: other_user.id)
-    if relationship && relationship.status.eql?("blocked")
-      relationship.destroy      
-    elsif relationship
-      relationship.status = :blocked
-      relationship.save
-    else
-      Follow.create(follower_id: id, followed_id: other_user.id, status: :blocked)
-    end
+  def relationship_status(other_user)
+    relationship = Follow.find_by(follower: self, followed: other_user)
+    relationship.status
   end
 
-  # TODO ver si puedo mover estas validaciones al controller y dejarlo sencillo
-  def accept_follow_request(other_user)
-    relationship = Follow.find_by(follower_id: other_user.id, followed_id: id)
-    if relationship && relationship.status.eql?("requested")
-      relationship.status = "following"
-      relationship.save
-    end
+  def future_events
+    events.where("date >= ? AND time > ?", Date.today, Time.now)
   end
 
-  # TODO ver si puedo mover estas validaciones al controller y dejarlo sencillo
+  def is_going_to?(event)
+    events.include?(event)
+  end
+
+  def assist(event)
+    Assistant.create(event: event, user: self)
+  end
+
+  def quit(event)
+    Assistant.create(event: event, user: self).destroy
+  end
+
+  def change_status(other_user, status)
+    follow = Follow.find_or_create_by(follower: self, followed: other_user)  
+    follow.update(status: status)
+  end
+
   def decline_follow_request(other_user)
-    relationship = Follow.find_by(follower_id: other_user.id, followed_id: id)
-    if relationship && relationship.status.eql?("requested")
-      relationship.destroy
+    Follow.find_by(follower: other_user, followed: self).destroy
+  end
+
+  # Defines the requested? following? and blocked? methods
+  user_statuses = ["requested", "following", "blocked"]
+  user_statuses.each do |status|
+    User.send(:define_method, "#{status}?") do |other_user|
+      Follow.exists?(follower: self, followed: other_user, status: user_statuses)
     end
   end
 
-  # Returns true if the current user is following the other user.
-  def following?(other_user)
-    Follow.find_by(follower_id: id, followed_id: other_user.id, status: :following)
-  end
-
-  # Returns true if the current user has requested to follow the other user.
-  def requested?(other_user)
-    Follow.find_by(follower_id: id, followed_id: other_user.id, status: :requested)
-  end
-
-  # Returns true if the current user has blocked the other user.
-  def blocked?(other_user)
-    Follow.find_by(follower_id: id, followed_id: other_user.id, status: :blocked)
-  end
-
-  def is_public_profile?
+  def is_public?
     !is_private
   end
 
-  def is_private_profile?
+  def is_private?
     is_private
   end
 
