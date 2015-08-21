@@ -14,7 +14,9 @@ class DeletingUsersTest < ActionDispatch::IntegrationTest
 	}
 
 	test 'Successful delete' do
-		delete "/users/#{@user.id}"
+	  delete "/users/#{@user.id}",
+      {},
+      { 'Authorization' => token_header(@user.auth_token) }
 		assert_equal 204, response.status
 	end
 end

@@ -17,6 +17,7 @@
 
 class User < ActiveRecord::Base
   has_secure_password
+  before_create :set_auth_token
 
   # A user can assist to many events
 	has_many :assistants 
@@ -53,19 +54,13 @@ class User < ActiveRecord::Base
       before_message: "The birthdate is incorrect"
     }
   validates :gender, presence: true, inclusion: [ "Male", "Female" ]
-  validates :is_private, presence: true
+  validates :is_private, inclusion: [ true, false ]
 	validates :bio, length: { maximum: 150 }
 
   #TODO FIX THIS ACCESOR AND MAKE ACTIVERECORD WORK
   def followers
     follower_ids = Follow.where(followed: self, status: :following).collect(&:follower_id)
     User.where(id: follower_ids)
-  end
-
-  # TODO ver si puedo pasar los labels a angular 
-  def get_going_label(event)
-    relationship = Assistant.find_by(event_id: event.id, user_id: id)
-    relationship.nil? ? "Join" : "Going"
   end
 
   def public_or_following_creator?(event)
@@ -130,4 +125,18 @@ class User < ActiveRecord::Base
     self.archived = true
     self.save
   end
+
+  private
+
+    def set_auth_token
+      return if auth_token.present?
+      self.auth_token = generate_auth_token
+    end
+
+    def generate_auth_token
+      loop do
+        token = SecureRandom.hex
+        break token unless self.class.exists?(auth_token: token)
+      end
+    end
 end

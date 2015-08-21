@@ -8,8 +8,9 @@ class CreateUsers < ActiveRecord::Migration
       t.string :gender,             null: false
       t.boolean :is_private,        null: false, default: false
       t.string :bio,                null: false, default: ""
-      t.string :image
       t.boolean :archived,          null: false, default: false
+      t.string :auth_token
+      t.string :image
       t.timestamps
     end
     add_index :users, :email, unique: true

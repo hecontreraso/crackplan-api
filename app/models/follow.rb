@@ -15,7 +15,7 @@ class Follow < ActiveRecord::Base
 
   validates :status, 
     presence: true, 
-    inclusion: [ "requested", "following", "blocked" ]
+    inclusion: [ "none", "requested", "following", "blocked" ]
 
   after_save :add_future_events_to_feed
   before_destroy :delete_feeds, :delete_assistances

@@ -16,10 +16,13 @@ class CreatingUsersTest < ActionDispatch::IntegrationTest
 	      	bio: "I just wanna make friends. Please be my friend!"
 				}
 			}.to_json,
-			{ 'Accept' => Mime::JSON, "Content-Type" => Mime::JSON.to_s }
+			{
+				'Accept' => Mime::JSON,
+				'Content-Type' => Mime::JSON.to_s,
+				'Authorization' => token_header(@user.auth_token)
+			}
 
 			assert_equal 201, response.status
-			assert_equal Mime::JSON, response.content_type
 
 			user = json(response.body)
 			assert_equal user_url(user[:id]), response.location

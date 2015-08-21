@@ -17,8 +17,8 @@ class Assistant < ActiveRecord::Base
   before_destroy :destroy_notifications
 
   private
-    def notify_followers
-      followers = User.find(user_id).followers
+    def notify_follower
+shome      followers = User.find(user_id).followers
       followers.each do |follower|
         Feed.create(
           user: follower,

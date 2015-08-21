@@ -28,14 +28,15 @@ ActiveRecord::Schema.define(version: 20150719043746) do
   add_index "assistants", ["user_id"], name: "index_assistants_on_user_id", using: :btree
 
   create_table "events", force: :cascade do |t|
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.string   "details",    default: "", null: false
-    t.string   "where",      default: "", null: false
-    t.date     "date",                    null: false
+    t.string   "details",                    null: false
+    t.string   "where",                      null: false
+    t.date     "date",                       null: false
     t.time     "time"
     t.string   "image"
-    t.integer  "creator_id",              null: false
+    t.integer  "creator_id",                 null: false
+    t.boolean  "archived",   default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "feeds", force: :cascade do |t|
@@ -60,16 +61,18 @@ ActiveRecord::Schema.define(version: 20150719043746) do
   add_index "follows", ["follower_id"], name: "index_follows_on_follower_id", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",           default: "",       null: false
-    t.string   "password_digest", default: "",       null: false
+    t.string   "email",                           null: false
+    t.string   "password_digest",                 null: false
+    t.string   "name",                            null: false
+    t.date     "birthdate",                       null: false
+    t.string   "gender",                          null: false
+    t.boolean  "is_private",      default: false, null: false
+    t.string   "bio",             default: "",    null: false
+    t.boolean  "archived",        default: false, null: false
+    t.string   "auth_token"
+    t.string   "image"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name"
-    t.date     "birthdate"
-    t.string   "gender"
-    t.string   "privacy",         default: "public"
-    t.string   "bio"
-    t.string   "image"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

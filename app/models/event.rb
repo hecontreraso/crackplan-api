@@ -14,7 +14,6 @@
 #
 
 class Event < ActiveRecord::Base
-
 	has_many :assistants
 	has_many :users, through: :assistants
 
@@ -61,28 +60,9 @@ class Event < ActiveRecord::Base
     self.save
   end
 
-  ########################### DECORATORS ###########################
-  
-
-  # TODO deprecar estas jodas
-  def friendly_date
-    if date.eql?(Date.today)
-      "Today"
-    elsif date.eql?(Date.tomorrow)
-      "Tomorrow"
-    else
-      date.strftime("%b %d")
-    end
-  end
-
-  def friendly_hour
-    time.strftime("%l:%M%P") unless time.nil?
-  end
-
   private
   	#Add event creator to assistance list after creation
     def assist_to_event
       creator.assist(self)
     end
-
 end

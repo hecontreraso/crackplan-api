@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   resources :events, except: [:new, :edit]
   resources :users, except: [:new, :edit]
 
+  get '/profile/:id' => 'profile#show', as: :profile
+
   # with_options except: [:new, :edit] do |api_methods|
   #   api_methods.resources :events
   #   api_methods.resources :users
