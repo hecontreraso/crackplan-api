@@ -1,15 +1,15 @@
 class UsersController < ApplicationController
 	# GET /users
-	def index
-		users = User.where(archived: false)
-		render json: users, status: 200
-	end
+	# def index
+	# 	users = User.where(archived: false)
+	# 	render json: users, status: 200
+	# end
 
 	# GET /users/:id
-	def show
-		user = User.find_unarchived(params[:id])
-		render json: user, status: 200
-	end
+	# def show
+	# 	user = User.find_unarchived(params[:id])
+	# 	render json: user, status: 200
+	# end
 
 	# POST /users
 	def create

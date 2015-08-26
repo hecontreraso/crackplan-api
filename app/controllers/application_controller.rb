@@ -2,18 +2,16 @@ class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
   include ActionController::RequestForgeryProtection
 
-	protect_from_forgery with: :null_session
+  protect_from_forgery with: :null_session
   
-  before_action :set_locale
-
   protected
     def user_signed_in?
       !@current_user.nil?
     end
 
-	  def set_locale
-	    I18n.locale = request.headers["Accept-Language"]
-	  end
+    def set_locale
+      I18n.locale = request.headers["Accept-Language"]
+    end
 
     def authenticate(optional = false)
       if optional
@@ -30,6 +28,9 @@ class ApplicationController < ActionController::API
     end
 
     def render_unauthorized
-			render json: 'Bad credentials', status: 401
+      render json: 'Bad credentials', status: 401
     end
 end
+
+
+

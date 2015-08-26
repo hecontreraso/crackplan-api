@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  post '/login' => 'login#login'
+
   resources :events, except: [:new, :edit]
   resources :users, except: [:new, :edit]
 

@@ -20,11 +20,13 @@ class ProfileController < ApplicationController
 			else
 				render json: "PRIVATE, NOT SIGNED IN"
 			end
-		elsif user_signed_in?
-			if @current_user.eql?(@user)
-				render json: "PUBLIC, SIGNED IN, SAME USER"
+		else
+			if user_signed_in?
+				if @current_user.eql?(@user)
+					render json: "PUBLIC, SIGNED IN, SAME USER"
+				end
 			else
-				render json: "PUBLIC, SIGNED IN, NOT SAME USER"
+				render json: "PUBLIC, NOT SAME USER"
 			end
 		end
 	end
