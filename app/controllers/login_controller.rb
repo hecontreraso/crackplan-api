@@ -1,14 +1,22 @@
 class LoginController < ApplicationController
 
-  before_action only: [:logout] do 
-  	authenticate(true)
-	end
-
 	# POST /login
 	def login
 		user = User.find_by(email: login_params[:email])
-		if user = user.authenticate(login_params[:password])
-			render json: user, status: 200
+
+		if user.nil?
+			render json: "Bad credentials", status: 401
+		elsif user = user.authenticate(login_params[:password])
+			render json: {
+				auth_token: user.auth_token,
+				email: user.email,
+				fullName: user.name,
+				birthdate: user.birthdate,
+				gender: user.gender,
+				is_private: user.is_private,
+				bio: user.bio
+				# image: user.image
+			}, status: 200
 		else
 			render json: "Bad credentials", status: 401
 		end
@@ -20,3 +28,11 @@ class LoginController < ApplicationController
       params.permit(:email, :password)
     end
 end
+
+
+
+
+
+
+
+

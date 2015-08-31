@@ -16,9 +16,11 @@ class Assistant < ActiveRecord::Base
   after_create :notify_followers
   before_destroy :destroy_notifications
 
+  validates_uniqueness_of :user_id, scope: [:event_id]
+
   private
-    def notify_follower
-shome      followers = User.find(user_id).followers
+    def notify_followers
+      followers = User.find(user_id).followers
       followers.each do |follower|
         Feed.create(
           user: follower,

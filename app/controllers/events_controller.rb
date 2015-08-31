@@ -1,32 +1,38 @@
 class EventsController < ApplicationController
 	before_action :authenticate
 
-	# GET /events
+	# GET /events/:index
   def index
-		# events = Event.where(archived: false) TODO revisar eventos archivados
-    feeds = @current_user.feeds.sort_by(&:created_at).reverse 
-    
-    rendered_events = []
+		index = params[:index].to_i
 
+    feeds = @current_user.feeds.order("created_at").limit(2).offset(index)
+    	# .reverse
+
+    events = []
     feeds.collect do |feed|
-      rendered_event = RenderedEvent.new
-
-      rendered_event.event_id = feed.event.id
-      rendered_event.feed_creator = feed.feed_creator
-      rendered_event.image = feed.event.image
-      rendered_event.creator = feed.event.creator
-      rendered_event.details = feed.event.details
-      rendered_event.where = feed.event.where
-      rendered_event.date = feed.event.date
-      rendered_event.time = feed.event.time
-      
-      rendered_event.hours_ago = ((Time.now - feed.created_at) / 1.hour).round
-      rendered_event.assistants = feed.event.get_visible_assistants(@current_user)
-      rendered_event.is_going = @current_user.is_going_to?(feed.event)
-
-      rendered_events << rendered_event
+    	event = Hash[
+    		id: feed.event.id, #TODO include this?
+				feed_creator: {
+					id: feed.feed_creator.id,
+					name: feed.feed_creator.name,
+					image: feed.feed_creator.image.small.url
+				},
+	      hours_ago: feed.time_ago,
+				image: feed.event.image.small.url,
+				details: feed.event.details,
+	      assistants: feed.event.get_visible_assistants(@current_user),
+				where: feed.event.where,
+				date: feed.event.date,
+				time: feed.event.time,
+	      going_or_join_label: @current_user.is_going_to?(feed.event),
+				creator: {
+					id: feed.feed_creator.id,
+					name: feed.feed_creator.name
+				}
+    	]
+      events << event
     end
-		render json: rendered_events, status: 200
+		render json: events, status: 200
   end
 
 	# GET /events/:id
@@ -37,71 +43,80 @@ class EventsController < ApplicationController
 	# end
 
 	# POST /events
-	def create
-    event_params[:time] = event_params[:time].to_time
+	# def create
+ #    event_params[:time] = event_params[:time].to_time
 
-    event = Event.new(event_params)
-    event.creator = current_user
+ #    event = Event.new(event_params)
+ #    event.creator = current_user
 
-    if event.save
-			head 204, location: event
-    else
-			render json: event.errors, status: 422
-     end
-	end
+ #    if event.save
+	# 		head 204, location: event
+ #    else
+	# 		render json: event.errors, status: 422
+ #     end
+	# end
 
 	# PATCH /events/:id
-	def update
-		event = Event.find_unarchived(params[:id])
+	# def update
+	# 	event = Event.find_unarchived(params[:id])
 
-		if !@current_user.eql?(event.creator)
-			head 401
-			return
-		end
+	# 	if !@current_user.eql?(event.creator)
+	# 		head 401
+	# 		return
+	# 	end
 
-    if event.update(event_params)
-			render json: event, status: 200
-    else
-			render json: event.errors, status: 422
-    end
-	end
+ #    if event.update(event_params)
+	# 		render json: event, status: 200
+ #    else
+	# 		render json: event.errors, status: 422
+ #    end
+	# end
 
 	# DELETE /events/:id
-	def delete
-		event = Event.find_unarchived(params[:id])
+	# AL ELIMINAR UN EVENTO, REMOVERLO DE LA TABLA FEEDS 
+	# def delete
+	# 	event = Event.find_unarchived(params[:id])
 		
-		if !@current_user.eql?(event.creator)
-			head 401
-			return
-		end
+	# 	if !@current_user.eql?(event.creator)
+	# 		head 401
+	# 		return
+	# 	end
 
-		event.archive
-		head status: 204
-	end
+	# 	event.archive
+	# 	head status: 204
+	# end
+
 
   # POST /events/:id/toggle_assistance
   def toggle_assistance
 		event = set_event
-		returned_value = ""
-
-		if @current_user.is_going_to?(event)
-			@current_user.quit(event)
-			returned_value = "assistance removed"
+  	if @current_user.is_going_to?(event)
+			# CAN'T QUIT if the user is the event's creator
+			if event.creator == @current_user
+				head 403
+			else
+				@current_user.quit(event)
+				render json: {user_is_going: false}, status: 204
+			end
 		else
-			@current_user.assist(event)
-			returned_value = "assistance added"
+			# CAN'T ASSIST if event is private and user is not following creator
+			if event.creator.is_private? && !@current_user.following?(event.creator)
+				head 403
+			else
+				@current_user.assist(event)
+				render json: {user_is_going: true}, status: 204
+			end
 		end
-
-    render json: { returned_state: returned_value }
   end
 
   private
     def set_event
-      @event = Event.find(params[:id])
+      @event = Event.find_unarchived(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def event_params
-      params.require(:event).permit(:details, :where, :date, :time, :image)
-    end
+    # # Never trust parameters from the scary internet, only allow the white list through.
+    # def event_params
+    #   params.require(:event).permit(:details, :where, :date, :time, :image)
+    # end
 end
+  # POST /events/:id/toggle_assistance

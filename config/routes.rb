@@ -2,10 +2,18 @@ Rails.application.routes.draw do
 
   post '/login' => 'login#login'
 
-  resources :events, except: [:new, :edit]
-  resources :users, except: [:new, :edit]
+  # resources :events, except: [:new, :edit]
+  # resources :users, except: [:new, :edit]
 
-  get '/profile/:id' => 'profile#show', as: :profile
+
+  # get '/profile/:id' => 'profile#show', as: :profile
+
+  patch '/edit_profile' => 'users#update'
+  post '/change_password' => 'users#change_password'
+  post '/change_privacy' => 'users#change_privacy'
+  
+  get '/events/:index' => 'events#index'
+  post '/events/:id/toggle_assistance' => 'events#toggle_assistance'
 
   # with_options except: [:new, :edit] do |api_methods|
   #   api_methods.resources :events

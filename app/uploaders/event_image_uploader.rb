@@ -18,11 +18,9 @@ class EventImageUploader < CarrierWave::Uploader::Base
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
   def default_url
-  #   # For Rails 3.1+ asset pipeline compatibility:
-  #   # ActionController::Base.helpers.asset_path("fallback/" + [version_name, "default.png"].compact.join('_'))
-  #
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
-    'event_missing.jpg' #rails will look at 'app/assets/images/default_avatar.png'
+    # 'event_missing.jpg' #rails will look at 'app/assets/images/default_avatar.png'
+    nil
   end
 
   # Process files as they are uploaded:
@@ -35,11 +33,11 @@ class EventImageUploader < CarrierWave::Uploader::Base
   # Create different versions of your uploaded files:
   version :medium do
     # returns a 50x50 image
-    process :resize_to_fill => [960, 640]
+    process :resize_to_fill => [600, 600]
   end
   version :small do
     # returns a 35x35 image
-    process :resize_to_fill => [480, 320]
+    process :resize_to_fill => [400, 400]
   end
 
   # Add a white list of extensions which are allowed to be uploaded.
