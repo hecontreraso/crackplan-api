@@ -24,7 +24,7 @@ class EventsController < ApplicationController
 				where: feed.event.where,
 				date: feed.event.date,
 				time: feed.event.time,
-	      going_or_join_label: @current_user.is_going_to?(feed.event),
+	      user_is_going: @current_user.is_going_to?(feed.event),
 				creator: {
 					id: feed.feed_creator.id,
 					name: feed.feed_creator.name
@@ -96,7 +96,7 @@ class EventsController < ApplicationController
 				head 403
 			else
 				@current_user.quit(event)
-				render json: {user_is_going: false}, status: 204
+				render json: {user_is_going: false}, status: 200
 			end
 		else
 			# CAN'T ASSIST if event is private and user is not following creator
@@ -104,7 +104,7 @@ class EventsController < ApplicationController
 				head 403
 			else
 				@current_user.assist(event)
-				render json: {user_is_going: true}, status: 204
+				render json: {user_is_going: true}, status: 200
 			end
 		end
   end
@@ -119,4 +119,3 @@ class EventsController < ApplicationController
     #   params.require(:event).permit(:details, :where, :date, :time, :image)
     # end
 end
-  # POST /events/:id/toggle_assistance

@@ -36,19 +36,27 @@ class Event < ActiveRecord::Base
   after_save :assist_to_event
 
   # Get all the assistants of an event that an specific user can see
+  # 1. If I'm the creator, I can see all assistants
+  # 2. If I'm following the creator or the creator has a public profile, 
+  # I can see all assistants but private and not following
   def get_visible_assistants(viewer_user)
     if viewer_user.nil? && creator.is_public?
-      return users.where(is_private: false)
-    elsif viewer_user.eql?(creator) # If I'm the creator, I can see all assistants
-      return users
-    # If I'm following the creator or the creator has a public profile, 
-    # I can see all assistants but private and not following
+      user_list = users.where(is_private: false)
+    elsif viewer_user.eql?(creator)
+      user_list = users
     elsif (viewer_user.public_or_following_creator?(self))
       # TODO: ORDER THIS
-      return users.collect { |user| 
+      user_list = users.collect { |user| 
         user if (user.is_public? || viewer_user.following?(user))
       }.compact
     end
+
+    # Removing unnecesary data. Leaving just name and id
+    assistant_list = []
+    user_list.each{ |assistant|
+      assistant_list << Hash[id: assistant.id, name: assistant.name]
+    }
+    return assistant_list
   end
 
   def self.find_unarchived(id)

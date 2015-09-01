@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
   end
 
   def quit(event)
-    Assistant.create(event: event, user: self).destroy
+    Assistant.find_by(event: event, user: self).destroy
   end
 
   def change_status(other_user, status)
