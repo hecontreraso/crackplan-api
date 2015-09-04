@@ -30,14 +30,15 @@ class Assistant < ActiveRecord::Base
     	end
     end
 
-    def destroy_notifications 
+    def destroy_notifications
       followers = User.find(user_id).followers
       followers.each do |follower|
-        Feed.find_by(
+        f = Feed.find_by(
           user: follower,
           event: event,
           feed_creator: user
-        ).destroy
+        )
+        f.destroy if f
       end
     end
 end

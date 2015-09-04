@@ -13,8 +13,10 @@ Rails.application.routes.draw do
   post '/change_privacy' => 'users#change_privacy'
   
   get '/events/:index' => 'events#index'
+  post '/events' => 'events#create'
   post '/events/:id/toggle_assistance' => 'events#toggle_assistance'
 
+  get '/profile/:id' => 'profile#show'
   # with_options except: [:new, :edit] do |api_methods|
   #   api_methods.resources :events
   #   api_methods.resources :users

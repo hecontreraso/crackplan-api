@@ -5,8 +5,7 @@ class EventsController < ApplicationController
   def index
 		index = params[:index].to_i
 
-    feeds = @current_user.feeds.order("created_at").limit(2).offset(index)
-    	# .reverse
+    feeds = @current_user.feeds.order("created_at DESC").limit(2).offset(index)
 
     events = []
     feeds.collect do |feed|
@@ -43,18 +42,19 @@ class EventsController < ApplicationController
 	# end
 
 	# POST /events
-	# def create
- #    event_params[:time] = event_params[:time].to_time
+	def create
+    event_params[:time] = event_params[:time].to_time
+    event_params[:date] = event_params[:date].to_date
+    event = Event.new(event_params)
+    event.creator = @current_user
 
- #    event = Event.new(event_params)
- #    event.creator = current_user
-
- #    if event.save
-	# 		head 204, location: event
- #    else
-	# 		render json: event.errors, status: 422
- #     end
-	# end
+    if event.save
+			head 204
+    else
+			render json: event.errors, status: 422
+     end
+	end
+  # params.permit(:details, :date, :time, :where, :image)
 
 	# PATCH /events/:id
 	# def update
@@ -114,8 +114,7 @@ class EventsController < ApplicationController
       @event = Event.find_unarchived(params[:id])
     end
 
-    # # Never trust parameters from the scary internet, only allow the white list through.
-    # def event_params
-    #   params.require(:event).permit(:details, :where, :date, :time, :image)
-    # end
+    def event_params
+      params.permit(:details, :date, :time, :where, :image)
+    end
 end

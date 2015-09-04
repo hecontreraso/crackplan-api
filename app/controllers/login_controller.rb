@@ -9,13 +9,14 @@ class LoginController < ApplicationController
 		elsif user = user.authenticate(login_params[:password])
 			render json: {
 				auth_token: user.auth_token,
+				id: user.id,
 				email: user.email,
 				fullName: user.name,
 				birthdate: user.birthdate,
 				gender: user.gender,
 				is_private: user.is_private,
-				bio: user.bio
-				# image: user.image
+				bio: user.bio,
+				image: user.image.small.url
 			}, status: 200
 		else
 			render json: "Bad credentials", status: 401
@@ -28,11 +29,3 @@ class LoginController < ApplicationController
       params.permit(:email, :password)
     end
 end
-
-
-
-
-
-
-
-
