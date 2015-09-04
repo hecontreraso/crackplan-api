@@ -46,9 +46,32 @@ class ProfileController < ApplicationController
 		end
 	end
 
+	# POST /toggle_follow/:id
+	def toggle_follow
+		@user = set_user
+		if @current_user.following?(@user) ||	@current_user.requested?(@user)
+			status = "unfollowed"
+			@current_user.change_status(@user, status)
+			render json: { status: status }, status: 200
+		else
+			status = "following" if @user.is_public?
+			status = "requested" if @user.is_private?
+			@current_user.change_status(@user, status)
+			render json: { status: status }, status: 200
+		end
+	end
+
+	def accept_request
+		@user = set_user
+		if @user.requested?(@current_user)
+			@user.change_status(@current_user, "following")
+			head 204
+		end
+	end
+
 	private
 		def set_user
-			@user = User.find(params[:id])
+			@user = User.find_unarchived(params[:id])
 		end
 
 	  def prepare_events(events)

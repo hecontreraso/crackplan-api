@@ -29,6 +29,8 @@ gem 'seedbank'
 
 gem 'rack-cors', :require => 'rack/cors'
 
+gem 'public_activity'
+
 # To use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 

@@ -9,13 +9,17 @@
 #
 
 class Follow < ActiveRecord::Base
+  include PublicActivity::Common
+  # tracked owner: Proc.new{ |controller, model| model.follower },
+    # recipient: Proc.new{ |controller, model| model.followed },
+    # params: { status: :status }
 
   belongs_to :followed, class_name: "User"
   belongs_to :follower, class_name: "User"
 
   validates :status, 
     presence: true, 
-    inclusion: [ "none", "requested", "following", "blocked" ]
+    inclusion: [ "unfollowed", "requested", "following", "blocked" ]
 
   after_save :add_future_events_to_feed
   before_destroy :delete_feeds, :delete_assistances

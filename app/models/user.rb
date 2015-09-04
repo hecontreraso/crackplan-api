@@ -93,9 +93,17 @@ class User < ActiveRecord::Base
     Assistant.find_by(event: event, user: self).destroy
   end
 
-  def change_status(other_user, status)
+  def change_status(other_user, new_status)
     follow = Follow.find_or_create_by(follower: self, followed: other_user)  
-    follow.update(status: status)
+    previous_status = follow.status
+    if follow.update(status: new_status)
+      follow.create_activity :update, owner: self, 
+        recipient: other_user, params: { status: :status }
+      if previous_status.eql?("requested") && new_status.eql?("following")
+        follow.create_activity :update, owner: other_user, 
+          recipient: self, params: { status: "accepted" }
+      end
+    end
   end
 
   def decline_follow_request(other_user)
@@ -106,7 +114,7 @@ class User < ActiveRecord::Base
   user_statuses = ["requested", "following", "blocked"]
   user_statuses.each do |status|
     User.send(:define_method, "#{status}?") do |other_user|
-      Follow.exists?(follower: self, followed: other_user, status: user_statuses)
+      Follow.exists?(follower: self, followed: other_user, status: status)
     end
   end
 

@@ -14,7 +14,8 @@
 #
 
 class Event < ActiveRecord::Base
-	has_many :assistants
+	
+  has_many :assistants
 	has_many :users, through: :assistants
 
 	belongs_to :creator, class_name: "User", inverse_of: :created_events

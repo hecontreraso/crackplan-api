@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   post '/events/:id/toggle_assistance' => 'events#toggle_assistance'
 
   get '/profile/:id' => 'profile#show'
+  post '/toggle_follow/:id' => 'profile#toggle_follow'
+  post '/accept_request/:id' => 'profile#accept_request'
+
   # with_options except: [:new, :edit] do |api_methods|
   #   api_methods.resources :events
   #   api_methods.resources :users

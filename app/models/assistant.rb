@@ -10,16 +10,20 @@
 #
 
 class Assistant < ActiveRecord::Base
+  include PublicActivity::Model
+  tracked owner: Proc.new{ |controller, model| model.user },
+    recipient: Proc.new{ |controller, model| model.event.creator }
+
 	belongs_to :user
 	belongs_to :event
 
-  after_create :notify_followers
-  before_destroy :destroy_notifications
+  after_create :add_feed_to_followers
+  before_destroy :destroy_feed_from_followers
 
   validates_uniqueness_of :user_id, scope: [:event_id]
 
   private
-    def notify_followers
+    def add_feed_to_followers
       followers = User.find(user_id).followers
       followers.each do |follower|
         Feed.create(
@@ -30,7 +34,7 @@ class Assistant < ActiveRecord::Base
     	end
     end
 
-    def destroy_notifications
+    def destroy_feed_from_followers
       followers = User.find(user_id).followers
       followers.each do |follower|
         f = Feed.find_by(

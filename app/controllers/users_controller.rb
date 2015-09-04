@@ -45,20 +45,6 @@ class UsersController < ApplicationController
 	# 	head status: 204
 	# end
 
-	# POST /follow/:id
-	# def follow_user
-	# 	@user = set_user
-	# 	status = "following" if @user.is_public?
-	# 	status = "requested" if @user.is_private?
-	# 	@current_user.change_status(@user, status)
-	# end
-
-	# POST /unfollow/:id
-	# def unfollow_user
-	# 	@user = set_user
-	# 	@current_user.change_status(@user, "none")
-	# end
-
 	# POST /change_password
 	def change_password
 		if @current_user.authenticate(change_password_params[:password])
