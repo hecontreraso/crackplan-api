@@ -2,12 +2,6 @@ Rails.application.routes.draw do
 
   post '/login' => 'login#login'
 
-  # resources :events, except: [:new, :edit]
-  # resources :users, except: [:new, :edit]
-
-
-  # get '/profile/:id' => 'profile#show', as: :profile
-
   patch '/edit_profile' => 'users#update'
   post '/change_password' => 'users#change_password'
   post '/change_privacy' => 'users#change_privacy'
@@ -18,10 +12,12 @@ Rails.application.routes.draw do
 
   get '/profile/:id' => 'profile#show'
   post '/profile/:id/toggle_follow' => 'profile#toggle_follow'
+  post '/removeProfilePic' => 'profile#remove_profile_pic'
  
   get '/notifications' => 'notifications#show'
   post '/notifications/:id/accept_request' => 'notifications#accept_request'
   post '/notifications/:id/decline_request' => 'notifications#decline_request'
+
 
 
   # with_options except: [:new, :edit] do |api_methods|

@@ -10,7 +10,7 @@ before_action :authenticate
     events = []
     feeds.each do |feed|
     	event = Hash[
-    		id: feed.event.id, #TODO include this?
+    		id: feed.event.id,
 				feed_creator: {
 					id: feed.feed_creator.id,
 					name: feed.feed_creator.name,

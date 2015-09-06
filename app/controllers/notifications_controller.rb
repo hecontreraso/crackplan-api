@@ -23,6 +23,10 @@ class NotificationsController < ApplicationController
     render json: notifications_to_return, status: 200
   end
 
+  def remove_profile_pic
+		@current_user.update_attribute(:image, nil)
+  end
+
 	def accept_request
 		user = set_user
 		if user.requested?(@current_user)
