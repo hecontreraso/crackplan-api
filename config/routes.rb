@@ -17,8 +17,12 @@ Rails.application.routes.draw do
   post '/events/:id/toggle_assistance' => 'events#toggle_assistance'
 
   get '/profile/:id' => 'profile#show'
-  post '/toggle_follow/:id' => 'profile#toggle_follow'
-  post '/accept_request/:id' => 'profile#accept_request'
+  post '/profile/:id/toggle_follow' => 'profile#toggle_follow'
+ 
+  get '/notifications' => 'notifications#show'
+  post '/notifications/:id/accept_request' => 'notifications#accept_request'
+  post '/notifications/:id/decline_request' => 'notifications#decline_request'
+
 
   # with_options except: [:new, :edit] do |api_methods|
   #   api_methods.resources :events

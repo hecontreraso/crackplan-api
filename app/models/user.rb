@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
 
   def relationship_status(other_user)
     relationship = Follow.find_by(follower: self, followed: other_user)
-    relationship.status
+    relationship.status if relationship
   end
 
   def future_events
@@ -86,22 +86,32 @@ class User < ActiveRecord::Base
   end
 
   def assist(event)
-    Assistant.create(event: event, user: self)
+    assistant = Assistant.create(event: event, user: self)
+
+    notification = PublicActivity::Activity.find_by(owner: self, recipient: event.creator, parameters: [event_id: event.id])
+
+    if notification
+      notification.update(created_at: Time.now)
+    elsif event.creator != @current_user
+      assistant.create_activity :create, owner: self, recipient: event.creator,
+        params: { event_id: event.id, event_image: event.image.small.url }
+    end
   end
 
   def quit(event)
-    Assistant.find_by(event: event, user: self).destroy
+    assistant = Assistant.find_by(event: event, user: self).destroy
+    notification = PublicActivity::Activity.find_by(owner: self, recipient: event.creator, parameters: [event_id: event.id])
+    notification.destroy if notification
   end
 
   def change_status(other_user, new_status)
     follow = Follow.find_or_create_by(follower: self, followed: other_user)  
     previous_status = follow.status
+
     if follow.update(status: new_status)
-      follow.create_activity :update, owner: self, 
-        recipient: other_user, params: { status: :status }
+      follow.create_activity new_status, owner: self, recipient: other_user unless new_status == "unfollowed"
       if previous_status.eql?("requested") && new_status.eql?("following")
-        follow.create_activity :update, owner: other_user, 
-          recipient: self, params: { status: "accepted" }
+        follow.create_activity "accepted", owner: other_user, recipient: self
       end
     end
   end

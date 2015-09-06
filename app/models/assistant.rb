@@ -11,8 +11,6 @@
 
 class Assistant < ActiveRecord::Base
   include PublicActivity::Model
-  tracked owner: Proc.new{ |controller, model| model.user },
-    recipient: Proc.new{ |controller, model| model.event.creator }
 
 	belongs_to :user
 	belongs_to :event

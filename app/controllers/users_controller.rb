@@ -58,10 +58,7 @@ class UsersController < ApplicationController
 
 	# POST /change_privacy
 	def change_privacy
-		if @current_user.update_attribute(
-			:is_private,
-			change_privacy_params[:is_private]
-		)
+		if @current_user.update_attribute(:is_private, change_privacy_params[:is_private])
 			head 204
 		else
 			head 400

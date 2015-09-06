@@ -1,8 +1,6 @@
 class ProfileController < ApplicationController
 
-  before_action do 
-  	authenticate(true)
-	end
+  before_action :authenticate
 
 	# GET /profile/:id
 	def show
@@ -17,68 +15,50 @@ class ProfileController < ApplicationController
 			followers_qty: @user.followers.count,
 			following_qty: @user.following.count
   	]
-		if @user.is_private?
-			if user_signed_in?
-				if @current_user.following?(@user)
-					# render json: "PRIVATE, FOLLOWING USER"
-					events = prepare_events(@user.created_events)
-					render json: { profile_data: profile_data, events: events }, status: 200
-				elsif @current_user.eql?(@user)
-					# render json: "SAME USER PROFILE"
-					events = prepare_events(@user.created_events)
-					render json: { profile_data: profile_data, events: events }, status: 200
-				else
-					# render json: "PRIVATE, SIGNED IN, NOT FOLLOWING"
-					render json: { profile_data: profile_data, events: "private" }, status: 200
-					# Dont show any event
-					# Show this profile is private message
-				end
-			else
-				# render json: "PRIVATE, NOT SIGNED IN"
-				# Dont show any event
-				render json: { profile_data: profile_data, events: "private"}, status: 200
-				# Show this profile is private message
-			end
-		else
-			# render json: "SAME USER PROFILE"
+
+		if @user.eql?(@current_user) || @user.is_public? || @current_user.following?(@user)
+			profile_data['can_see_events'] = true
+  	else
+			profile_data['can_see_events'] = false
+  	end
+
+  	if profile_data['can_see_events']
 			events = prepare_events(@user.created_events)
-			render json: { profile_data: profile_data, events: events }, status: 200
+  	else
+			events = nil
 		end
+
+		profile_data['status'] = @current_user.relationship_status(@user)
+		
+		render json: { profile_data: profile_data, events: events }, status: 200
 	end
 
 	# POST /toggle_follow/:id
 	def toggle_follow
-		@user = set_user
-		if @current_user.following?(@user) ||	@current_user.requested?(@user)
-			status = "unfollowed"
-			@current_user.change_status(@user, status)
-			render json: { status: status }, status: 200
-		else
-			status = "following" if @user.is_public?
-			status = "requested" if @user.is_private?
-			@current_user.change_status(@user, status)
-			render json: { status: status }, status: 200
-		end
-	end
+		user = set_user
+		can_see_events = "unchanged"
 
-	def accept_request
-		@user = set_user
-		if @user.requested?(@current_user)
-			@user.change_status(@current_user, "following")
-			head 204
+		if @current_user.following?(user) || @current_user.requested?(user)
+			can_see_events = false if user.is_private?
+			@current_user.change_status(user, "unfollowed")
+			render json: { status: "unfollowed", can_see_events: can_see_events }, status: 200
+		else
+			status = user.is_public? ? "following" : "requested" 
+			@current_user.change_status(user, status)
+			render json: { status: status, can_see_events: can_see_events }, status: 200
 		end
 	end
 
 	private
 		def set_user
-			@user = User.find_unarchived(params[:id])
+			user = User.find_unarchived(params[:id])
 		end
 
 	  def prepare_events(events)
 	    returned_events = []
 	    
 	    events.each do |event|
-	    	is_going_to = @current_user.is_going_to?(event) if user_signed_in?
+	    	is_going_to = @current_user.is_going_to?(event)
 	    	
 	    	event = Hash[
 	    		id: event.id, #TODO include this?

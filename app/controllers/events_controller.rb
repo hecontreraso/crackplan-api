@@ -1,5 +1,5 @@
 class EventsController < ApplicationController
-	before_action :authenticate
+before_action :authenticate
 
 	# GET /events/:index
   def index
@@ -8,7 +8,7 @@ class EventsController < ApplicationController
     feeds = @current_user.feeds.order("created_at DESC").limit(2).offset(index)
 
     events = []
-    feeds.collect do |feed|
+    feeds.each do |feed|
     	event = Hash[
     		id: feed.event.id, #TODO include this?
 				feed_creator: {
@@ -16,7 +16,7 @@ class EventsController < ApplicationController
 					name: feed.feed_creator.name,
 					image: feed.feed_creator.image.small.url
 				},
-	      hours_ago: feed.time_ago,
+	      hours_ago: time_ago(feed.created_at),
 				image: feed.event.image.small.url,
 				details: feed.event.details,
 	      assistants: feed.event.get_visible_assistants(@current_user),
