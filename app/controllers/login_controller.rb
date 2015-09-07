@@ -11,7 +11,7 @@ class LoginController < ApplicationController
 				auth_token: user.auth_token,
 				id: user.id,
 				email: user.email,
-				fullName: user.name,
+				name: user.name,
 				birthdate: user.birthdate,
 				gender: user.gender,
 				is_private: user.is_private,

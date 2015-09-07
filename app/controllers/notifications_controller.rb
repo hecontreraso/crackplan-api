@@ -23,10 +23,7 @@ class NotificationsController < ApplicationController
     render json: notifications_to_return, status: 200
   end
 
-  def remove_profile_pic
-		@current_user.update_attribute(:image, nil)
-  end
-
+  # POST /notifications/:id/accept_request
 	def accept_request
 		user = set_user
 		if user.requested?(@current_user)
@@ -36,6 +33,7 @@ class NotificationsController < ApplicationController
 		end
 	end
 
+  # POST /notifications/:id/decline_request
 	def decline_request
 		user = set_user
 		if user.requested?(@current_user)
@@ -45,13 +43,9 @@ class NotificationsController < ApplicationController
 		end
 	end
 
-	def delete_request_notification(user)
-    notification = PublicActivity::Activity.find_by(owner: user, recipient: @current_user, key: "follow.requested")
-		notification.destroy
-	end
-
   private
-  	def set_user
-			user = User.find_unarchived(params[:id])
+		def delete_request_notification(user)
+	    notification = PublicActivity::Activity.find_by(owner: user, recipient: @current_user, key: "follow.requested")
+			notification.destroy
 		end
 end

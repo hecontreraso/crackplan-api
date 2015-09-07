@@ -23,7 +23,7 @@ class ProfileController < ApplicationController
   	end
 
   	if profile_data['can_see_events']
-			events = prepare_events(@user.created_events)
+			events = prepare_events(@user.created_events.order(date: :desc))
   	else
 			events = nil
 		end
@@ -32,6 +32,17 @@ class ProfileController < ApplicationController
 		
 		render json: { profile_data: profile_data, events: events }, status: 200
 	end
+
+	def add_profile_pic
+		@current_user.update_attribute(:image, set_profile_image[:image])
+		head 204
+	end
+
+	# POST /removeProfilePic
+  def remove_profile_pic
+		@current_user.update_attribute(:image, nil)
+		head 204
+  end
 
 	# POST /toggle_follow/:id
 	def toggle_follow
@@ -52,6 +63,10 @@ class ProfileController < ApplicationController
 	private
 		def set_user
 			user = User.find_unarchived(params[:id])
+		end
+
+  	def set_profile_image
+			params.permit(:image)
 		end
 
 	  def prepare_events(events)

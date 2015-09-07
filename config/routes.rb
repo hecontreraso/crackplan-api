@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   get '/profile/:id' => 'profile#show'
   post '/profile/:id/toggle_follow' => 'profile#toggle_follow'
+  post '/addProfilePic' => 'profile#add_profile_pic'
   post '/removeProfilePic' => 'profile#remove_profile_pic'
  
   get '/notifications' => 'notifications#show'
