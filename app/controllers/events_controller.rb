@@ -35,11 +35,11 @@ before_action :authenticate
   end
 
 	# GET /events/:id
-	# def show
-		# que solo pueda ver eventos propios
-		# event = Event.find_unarchived(params[:id])
-		# render json: event, status: 200
-	# end
+	def show
+		# METHOD NOT FINISHED YET
+		event = Event.find_unarchived(params[:id])
+		render json: event, status: 200
+	end
 
 	# POST /events
 	def create
@@ -54,37 +54,34 @@ before_action :authenticate
 			render json: event.errors, status: 422
      end
 	end
-  # params.permit(:details, :date, :time, :where, :image)
 
 	# PATCH /events/:id
-	# def update
-	# 	event = Event.find_unarchived(params[:id])
+	def update
+		event = Event.find_unarchived(params[:id])
 
-	# 	if !@current_user.eql?(event.creator)
-	# 		head 401
-	# 		return
-	# 	end
+		if !@current_user.eql?(event.creator)
+			head 401
+			return
+		end
 
- #    if event.update(event_params)
-	# 		render json: event, status: 200
- #    else
-	# 		render json: event.errors, status: 422
- #    end
-	# end
+    if event.update(event_params)
+			render json: event, status: 200
+    else
+			render json: event.errors, status: 422
+    end
+	end
 
 	# DELETE /events/:id
-	# AL ELIMINAR UN EVENTO, REMOVERLO DE LA TABLA FEEDS 
-	# def delete
-	# 	event = Event.find_unarchived(params[:id])
-		
-	# 	if !@current_user.eql?(event.creator)
-	# 		head 401
-	# 		return
-	# 	end
+	def delete
+		event = Event.find_unarchived(params[:id])
+		if !@current_user.eql?(event.creator)
+			head 401
+			return
+		end
 
-	# 	event.archive
-	# 	head status: 204
-	# end
+		event.archive
+		head status: 204
+	end
 
 
   # POST /events/:id/toggle_assistance

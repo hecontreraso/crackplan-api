@@ -2,31 +2,19 @@ class UsersController < ApplicationController
 
 	before_action :authenticate
 
-	# GET /users
-	# def index
-	# 	users = User.where(archived: false)
-	# 	render json: users, status: 200
-	# end
-
-	# GET /users/:id
-	# def show
-	# 	user = User.find_unarchived(params[:id])
-	# 	render json: user, status: 200
-	# end
-
 	# POST /users
-	# def create
-	# 	user = User.new(user_params)
-	# 	if user.save
-	# 		head 204, location: user
-	# 	else
-	# 		render json: user.errors, status: 422
-	# 	end
-	# end
+	def create
+		user = User.new(user_params)
+		if user.save
+			head 204, location: user
+		else
+			render json: user.errors, status: 422
+		end
+	end
 
 	# PATCH /edit_profile
 	def update
-		if @current_user.update(edit_user_params)
+		if @current_user.update(user_params)
 			head 204
 		else
 			render json: @current_user.errors, status: 400
@@ -34,11 +22,11 @@ class UsersController < ApplicationController
 	end
 
 	# DELETE /users
-	# def destroy
-	# 	user = User.find_unarchived(params[:id])
-	# 	user.archive
-	# 	head status: 204
-	# end
+	def destroy
+		user = User.find_unarchived(params[:id])
+		user.archive
+		head status: 204
+	end
 
 	# POST /change_password
 	def change_password
@@ -61,14 +49,8 @@ class UsersController < ApplicationController
 	end
 
 	private
-		# def set_user
-		# 	@user = User.find(params[:id])
-		# end
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def edit_user_params
-			# params.permit(:email, :name, :birthdate, :gender, :bio)
+    def user_params
 			params.require(:user).permit(:email, :name, :birthdate, :gender, :bio)
-      # params.require(:event).permit(:details, :where, :date, :time, :image)
 		end
 
     def change_password_params
