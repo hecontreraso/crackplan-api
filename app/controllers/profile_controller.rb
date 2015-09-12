@@ -34,13 +34,17 @@ class ProfileController < ApplicationController
 	end
 
 	def add_profile_pic
-		@current_user.update_attribute(:image, set_profile_image[:image])
-		render json: "OK", status: 200
+		if @current_user.update(image: set_profile_image[:image])
+			head 204
+		else
+			head 400
+		end
 	end
 
 	# POST /removeProfilePic
   def remove_profile_pic
-		@current_user.update_attribute(:image, nil)
+  	@current_user.remove_image!
+		@current_user.save
 		head 204
   end
 

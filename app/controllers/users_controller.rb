@@ -26,14 +26,9 @@ class UsersController < ApplicationController
 
 	# PATCH /edit_profile
 	def update
-		begin
-			@current_user.update_attribute(:email, edit_user_params[:email])
-			@current_user.update_attribute(:name, edit_user_params[:name])
-			@current_user.update_attribute(:birthdate, edit_user_params[:birthdate])
-			@current_user.update_attribute(:gender, edit_user_params[:gender])
-			@current_user.update_attribute(:bio, edit_user_params[:bio])
+		if @current_user.update(edit_user_params)
 			head 204
-		rescue
+		else
 			render json: @current_user.errors, status: 400
 		end
 	end
