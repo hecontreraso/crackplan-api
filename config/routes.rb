@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get '/events/:index' => 'events#index'
   post '/events' => 'events#create'
   post '/events/:id/toggle_assistance' => 'events#toggle_assistance'
+  post '/addEventPic' => 'events#add_event_pic'
 
   get '/profile/:id' => 'profile#show'
   post '/profile/:id/toggle_follow' => 'profile#toggle_follow'

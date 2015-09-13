@@ -35,11 +35,11 @@ before_action :authenticate
   end
 
 	# GET /events/:id
-	def show
+	# def show
 		# METHOD NOT FINISHED YET
-		event = Event.find_unarchived(params[:id])
-		render json: event, status: 200
-	end
+		# event = Event.find_unarchived(params[:id])
+		# render json: event, status: 200
+	# end
 
 	# POST /events
 	def create
@@ -55,21 +55,30 @@ before_action :authenticate
      end
 	end
 
-	# PATCH /events/:id
-	def update
-		event = Event.find_unarchived(params[:id])
-
-		if !@current_user.eql?(event.creator)
-			head 401
-			return
+	def add_event_pic
+		if @current_user.created_events.last.update(image: set_event_image[:image])
+			# head 204
+			render json: "ok", status: 200
+		else
+			# head 400
+			render json: "ERROR", status: 200
 		end
-
-    if event.update(event_params)
-			render json: event, status: 200
-    else
-			render json: event.errors, status: 422
-    end
 	end
+	# PATCH /events/:id
+	# def update
+	# 	event = Event.find_unarchived(params[:id])
+
+	# 	if !@current_user.eql?(event.creator)
+	# 		head 401
+	# 		return
+	# 	end
+
+ #    if event.update(event_params)
+	# 		render json: event, status: 200
+ #    else
+	# 		render json: event.errors, status: 422
+ #    end
+	# end
 
 	# DELETE /events/:id
 	def delete
@@ -110,6 +119,10 @@ before_action :authenticate
     def set_event
       @event = Event.find_unarchived(params[:id])
     end
+
+  	def set_event_image
+			params.permit(:image)
+		end
 
     def event_params
       params.permit(:details, :date, :time, :where, :image)
