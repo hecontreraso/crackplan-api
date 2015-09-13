@@ -20,7 +20,7 @@ class Event < ActiveRecord::Base
 
 	belongs_to :creator, class_name: "User", inverse_of: :created_events
 
-  validates :details, presence: true
+  validates :details, presence: true, length: { maximum: 500 }
   validates :where, presence: true, length: { maximum: 150 }
   validates :date, 
     presence: true,
@@ -34,7 +34,7 @@ class Event < ActiveRecord::Base
 	# Avatar uploader using carrierwave
   mount_uploader :image, EventImageUploader
 
-  after_save :assist_to_event
+  after_create :assist_to_event
 
   # Get all the assistants of an event that an specific user can see
   # 1. If I'm the creator, I can see all assistants

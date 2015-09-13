@@ -43,7 +43,7 @@ before_action :authenticate
 
 	# POST /events
 	def create
-    event_params[:time] = event_params[:time].to_time
+    event_params[:time] = event_params[:time].to_time if event_params[:time]
     event_params[:date] = event_params[:date].to_date
     event = Event.new(event_params)
     event.creator = @current_user
@@ -56,7 +56,9 @@ before_action :authenticate
 	end
 
 	def add_event_pic
-		if @current_user.created_events.last.update(image: set_event_image[:image])
+		event = @current_user.created_events.last
+		event.image = set_event_image[:image]
+		if event.save!
 			# head 204
 			render json: "ok", status: 200
 		else
