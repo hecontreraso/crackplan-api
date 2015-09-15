@@ -77,17 +77,15 @@ class ProfileController < ApplicationController
 	    returned_events = []
 	    
 	    events.each do |event|
-	    	is_going_to = @current_user.is_going_to?(event)
-	    	
 	    	event = Hash[
-	    		id: event.id, #TODO include this?
+	    		id: event.id,
 					image: event.image.small.url,
 					details: event.details,
 		      assistants: event.get_visible_assistants(@current_user),
 					where: event.where,
 					date: event.date,
 					time: event.time,
-		      user_is_going: is_going_to
+		      user_is_going: @current_user.is_going_to?(event)
 	    	]
 	      returned_events << event
 	    end

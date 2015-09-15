@@ -48,7 +48,7 @@ class EventsController < ApplicationController
     event = Event.new(event_params)
     event.creator = @current_user
 
-    if event.save
+    if event.save!
 			head 204
     else
 			render json: event.errors, status: 422
