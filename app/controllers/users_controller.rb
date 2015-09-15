@@ -29,9 +29,9 @@ class UsersController < ApplicationController
 	end
 
 	# POST /change_password
-	def change_password
-		if @current_user.authenticate(change_password_params[:password])
-			@current_user.password = change_password_params[:new_password]
+	def update_password
+		if @current_user.authenticate(update_password_params[:password])
+			@current_user.password = update_password_params[:new_password]
 			@current_user.save
 			head 204
 		else
@@ -40,8 +40,8 @@ class UsersController < ApplicationController
 	end
 
 	# POST /change_privacy
-	def change_privacy
-		if @current_user.update_attribute(:is_private, change_privacy_params[:is_private])
+	def update_privacy
+		if @current_user.update_attribute(:is_private, update_privacy_params[:is_private])
 			head 204
 		else
 			head 400
@@ -53,11 +53,11 @@ class UsersController < ApplicationController
 			params.require(:user).permit(:email, :name, :birthdate, :gender, :bio)
 		end
 
-    def change_password_params
+    def update_password_params
       params.permit(:password, :new_password)
     end
 
-    def change_privacy_params
+    def update_privacy_params
       params.permit(:is_private)
     end
 end

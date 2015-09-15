@@ -3,14 +3,15 @@
 # Table name: events
 #
 #  id         :integer          not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  details    :string           default(""), not null
-#  where      :string           default(""), not null
+#  details    :string           not null
+#  where      :string           not null
 #  date       :date             not null
 #  time       :time
 #  image      :string
-#  creator_id :integer
+#  creator_id :integer          not null
+#  archived   :boolean          default(FALSE), not null
+#  created_at :datetime
+#  updated_at :datetime
 #
 
 class Event < ActiveRecord::Base

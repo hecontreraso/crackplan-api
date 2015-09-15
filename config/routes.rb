@@ -3,8 +3,8 @@ Rails.application.routes.draw do
   post '/login' => 'login#login'
 
   patch '/edit_profile' => 'users#update'
-  post '/change_password' => 'users#change_password'
-  post '/change_privacy' => 'users#change_privacy'
+  post '/change_password' => 'users#update_password'
+  post '/change_privacy' => 'users#update_privacy'
   
   get '/events/:index' => 'events#index'
   post '/events' => 'events#create'
