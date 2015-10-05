@@ -20,6 +20,6 @@ FactoryGirl.define do
     where "Let's go to the beach"
     date Date.today + 3.days
     time Time.new(2002, 10, 31, 19, 30, 0)
-    association :user
+    association :creator, factory: :user
   end
 end
