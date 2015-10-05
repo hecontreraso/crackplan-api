@@ -29,6 +29,5 @@ module CrackplanApi
         resource '*', :headers => :any, :methods => [:get, :post, :patch, :delete, :options]
       end
     end
-
   end
 end

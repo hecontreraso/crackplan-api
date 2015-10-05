@@ -2,17 +2,19 @@
 #
 # Table name: users
 #
-#  id                 :integer          not null, primary key
-#  email              :string           default(""), not null
-#  password_digest    :string           default(""), not null
-#  created_at         :datetime
-#  updated_at         :datetime
-#  name               :string
-#  birthdate          :date
-#  gender             :string
-#  is_private         :boolean
-#  bio                :string
-#  image              :string
+#  id              :integer          not null, primary key
+#  email           :string           not null
+#  password_digest :string           not null
+#  name            :string           not null
+#  birthdate       :date             not null
+#  gender          :string           not null
+#  is_private      :boolean          default(FALSE), not null
+#  bio             :string           default(""), not null
+#  archived        :boolean          default(FALSE), not null
+#  auth_token      :string
+#  image           :string
+#  created_at      :datetime
+#  updated_at      :datetime
 #
 
 class User < ActiveRecord::Base
