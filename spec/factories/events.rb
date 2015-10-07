@@ -14,6 +14,7 @@
 #  updated_at :datetime
 #
 
+
 FactoryGirl.define do
   factory :event do
     details "Lorem ipsum dolor sit amet"

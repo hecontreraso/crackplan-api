@@ -9,9 +9,12 @@
 #  updated_at :datetime         not null
 #
 
-FactoryGirl.define do
-  factory :assistant do
-    association :user, factory: :user
-    association :event, factory: :event
+require 'rails_helper'
+
+RSpec.describe Assistant, type: :model do
+  context 'validations' do
+    it 'has a valid factory' do
+      expect(FactoryGirl.build(:assistant)).to be_valid
+    end
   end
 end

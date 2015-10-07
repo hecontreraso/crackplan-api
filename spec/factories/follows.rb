@@ -10,7 +10,20 @@
 
 FactoryGirl.define do
   factory :follow do
-    
-  end
+    association :follower, factory: :user
+    association :followed, factory: :user
+    status 'following'
 
+    trait :blocked do
+ 		  status 'blocked'
+    end
+
+    trait :requested do
+ 		  status 'requested'
+    end
+
+    trait :unfollowed do
+ 		  status 'unfollowed'
+    end
+  end
 end

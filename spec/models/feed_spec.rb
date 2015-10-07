@@ -10,10 +10,12 @@
 #  updated_at      :datetime         not null
 #
 
-FactoryGirl.define do
-  factory :feed do
-    association :user, factory: :user
-    association :event, factory: :event
-    association :feed_creator, factory: :user
+require 'rails_helper'
+
+RSpec.describe Feed, type: :model do
+  context 'validations' do
+    it 'has a valid factory' do
+      expect(FactoryGirl.build(:feed)).to be_valid
+    end
   end
 end
