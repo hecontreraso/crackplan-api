@@ -39,23 +39,23 @@ RSpec.describe User, type: :model do
 		 	it { should validate_confirmation_of(:password) }
 		 	it { should validate_length_of(:password).is_at_least(6) }
     end
-  end
 
-  describe '#name' do
-	 	it { should validate_presence_of(:name) }
-	 	it { should validate_length_of(:name)}
-  end
+    describe '#name' do
+      it { should validate_presence_of(:name) }
+      it { should validate_length_of(:name)}
+    end
 
-  describe '#birthdate' do
-	 	it { should validate_presence_of(:birthdate) }
-  end
+    describe '#birthdate' do
+      it { should validate_presence_of(:birthdate) }
+    end
 
-  describe '#gender' do
-    it { should validate_presence_of(:gender) }
-    it { should validate_inclusion_of(:gender).in_array(%w(Male Female)) }
-  end
+    describe '#gender' do
+      it { should validate_presence_of(:gender) }
+      it { should validate_inclusion_of(:gender).in_array(%w(Male Female)) }
+    end
 
-  describe '#bio' do
-	 	it { should validate_length_of(:bio).is_at_most(150) }
+    describe '#bio' do
+      it { should validate_length_of(:bio).is_at_most(150) }
+    end
   end
 end

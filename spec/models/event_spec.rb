@@ -21,5 +21,24 @@ RSpec.describe Event, type: :model do
     it 'has a valid factory' do
       expect(FactoryGirl.build(:event)).to be_valid
     end
+
+	  describe '#details' do
+		 	it { should validate_presence_of(:details) }
+		 	it { should validate_length_of(:details).is_at_most(500) }
+	  end
+
+	  describe '#where' do
+		 	it { should validate_presence_of(:where) }
+		 	it { should validate_length_of(:where).is_at_most(150) }
+	  end
+
+	  describe '#date' do
+	    it { should validate_presence_of(:date) }
+	  end
+
+	  describe '#creator' do
+		 	it { should validate_presence_of(:creator_id) }
+	  end
+
   end
 end
