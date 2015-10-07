@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
   mount_uploader :image, UserImageUploader
 
   validates :email, presence: true, uniqueness: true, length: { maximum: 60 }
-  validates :password, presence:true, confirmation: true, length: { minimum: 6 }, on: :create
+  validates :password, presence: true, confirmation: true, length: { minimum: 6 }, on: :create
 	validates :name, presence: true, length: { maximum: 30 }
 	validates :birthdate,
     presence: true,

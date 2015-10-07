@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/thoughtbot/shoulda-matchers.git
+  revision: 125ba3ed015a1bb0321f00521df9147b18d338a8
+  specs:
+    shoulda-matchers (3.0.0)
+      activesupport (>= 4.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -333,6 +340,7 @@ DEPENDENCIES
   rails-api
   rspec-rails
   seedbank
+  shoulda-matchers!
   spring
   web-console (~> 2.0)
 
