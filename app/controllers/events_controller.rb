@@ -52,7 +52,7 @@ class EventsController < ApplicationController
 			head 204
     else
 			render json: event.errors, status: 422
-     end
+    end
 	end
 
 	def add_event_pic

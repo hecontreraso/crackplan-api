@@ -13,7 +13,6 @@ RSpec.describe 'login' do
 
     response_data = JSON.parse(response.body)
 
-    byebug
     expect(response_data["name"]).to eq(user.name)
     expect(response_data["email"]).to eq(user.email)
     expect(Date.parse(response_data["birthdate"])).to eq(user.birthdate)
