@@ -35,7 +35,8 @@ class Assistant < ActiveRecord::Base
     def destroy_feed_from_followers
       followers = User.find(user_id).followers
       followers.each do |follower| 
-        f.destroy if Feed.find_by(user: follower, event: event, feed_creator: user )
+        f = Feed.find_by(user: follower, event: event, feed_creator: user )
+        f.destroy if f
       end
     end
 end

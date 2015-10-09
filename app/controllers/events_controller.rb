@@ -1,6 +1,7 @@
 class EventsController < ApplicationController
 	before_action :authenticate
 
+	# Feed of events
 	# GET /events/:index
   def index
 		index = params[:index].to_i
@@ -34,13 +35,6 @@ class EventsController < ApplicationController
 		render json: events, status: 200
   end
 
-	# GET /events/:id
-	# def show
-		# METHOD NOT FINISHED YET
-		# event = Event.find_unarchived(params[:id])
-		# render json: event, status: 200
-	# end
-
 	# POST /events
 	def create
     event_params[:time] = event_params[:time].to_time if event_params[:time]
@@ -55,6 +49,7 @@ class EventsController < ApplicationController
     end
 	end
 
+	# POST /addEventPic
 	def add_event_pic
 		event = @current_user.created_events.last
 		event.image = set_event_image[:image]
@@ -83,17 +78,16 @@ class EventsController < ApplicationController
 	# end
 
 	# DELETE /events/:id
-	def delete
-		event = Event.find_unarchived(params[:id])
-		if !@current_user.eql?(event.creator)
-			head 401
-			return
-		end
+	# def delete
+	# 	event = Event.find_unarchived(params[:id])
+	# 	if !@current_user.eql?(event.creator)
+	# 		head 401
+	# 		return
+	# 	end
 
-		event.archive
-		head status: 204
-	end
-
+	# 	event.archive
+	# 	head status: 204
+	# end
 
   # POST /events/:id/toggle_assistance
   def toggle_assistance

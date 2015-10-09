@@ -130,6 +130,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  def change_privacy
+    self.is_private = !is_private
+    self.save!
+  end
+
   def is_public?
     !is_private
   end

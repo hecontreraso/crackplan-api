@@ -16,8 +16,8 @@
 
 FactoryGirl.define do
   factory :event do
-    details "Lorem ipsum dolor sit amet"
-    where "Let's go to the beach"
+    sequence(:details) { |n| "Details #{n}" }
+    sequence(:where) { |n| "Where #{n}" }
     date Date.today + 3.days
     time Time.new(2002, 10, 31, 19, 30, 0)
     association :creator, factory: :user
