@@ -1,5 +1,4 @@
 require 'rails_helper'
-# require 'spec_helper'
 
 RSpec.describe 'login' do
   it 'returns 200 on login succesfully' do
