@@ -19,7 +19,7 @@
 
 FactoryGirl.define do
   factory :user do
-    sequence(:email) { |n| "user#{n}@example.com" }
+    sequence(:email) { |n| "person#{n}@example.com" }
     password '12345678'
     name "Stephen"
     birthdate Date.today - 20.years

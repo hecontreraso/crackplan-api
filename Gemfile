@@ -25,6 +25,8 @@ gem 'figaro'
 # gem 'airbrake'
 #TODO activate airbrake
 
+gem 'database_cleaner'
+
 gem 'seedbank'
 
 gem 'rack-cors', :require => 'rack/cors'
@@ -46,8 +48,8 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers', github: 'thoughtbot/shoulda-matchers'
   gem 'factory_girl_rails'
-  gem 'guard-livereload', '~> 2.4', require: false
-  gem 'guard-rspec', require: false
+  gem 'guard-rspec'
+  gem 'guard-livereload'
 end
 
 
