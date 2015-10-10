@@ -32,7 +32,7 @@ class UsersController < ApplicationController
 	def update_password
 		if @current_user.authenticate(update_password_params[:password])
 			@current_user.password = update_password_params[:new_password]
-			@current_user.save
+			@current_user.save!
 			head 204
 		else
 			render json: 'Old password invalid', status: 403
