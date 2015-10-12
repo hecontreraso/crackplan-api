@@ -51,10 +51,10 @@ RSpec.describe '#Events' do
     post "/events/#{event.id}/toggle_assistance",
       {}, { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to eq(200)
+    expect(response.status).to be 200
 
     response_data = JSON.parse(response.body)
-    expect(response_data["user_is_going"]).to eq(true)
+    expect(response_data["user_is_going"]).to be true
   end
 
   it 'user assists to a private event (following the creator)' do
@@ -65,10 +65,10 @@ RSpec.describe '#Events' do
     post "/events/#{event.id}/toggle_assistance",
       {}, { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be(200)
+    expect(response.status).to be 200
 
     response_data = JSON.parse(response.body)
-    expect(response_data["user_is_going"]).to eq(true)
+    expect(response_data["user_is_going"]).to be true
   end
 
   it 'user try to assist to a private event (non-following the creator)' do
@@ -78,7 +78,7 @@ RSpec.describe '#Events' do
     post "/events/#{event.id}/toggle_assistance",
       {}, { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be(403)
+    expect(response.status).to be 403
   end
 
   it 'user quits from an event' do
@@ -90,9 +90,9 @@ RSpec.describe '#Events' do
     post "/events/#{event.id}/toggle_assistance",
       {}, { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be(200)
+    expect(response.status).to be 200
     response_data = JSON.parse(response.body)
-    expect(response_data["user_is_going"]).to eq(false)
+    expect(response_data["user_is_going"]).to be false
   end
 
   it 'user updates an event'

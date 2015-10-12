@@ -17,7 +17,7 @@ RSpec.describe '#Events' do
 
     patch '/edit_profile', { user: data }, { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be(204)
+    expect(response.status).to be 204
 
     expect(User.last.email).to eq(data[:email])
     expect(User.last.name).to eq(data[:name])
@@ -32,8 +32,8 @@ RSpec.describe '#Events' do
     user = FactoryGirl.create(:user)
     post '/change_password', { password: '12345678', new_password: '87654321' }, { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be(204)
-    expect(User.last.authenticate('87654321')).to_not eq(false)
+    expect(response.status).to be 204
+    expect(User.last.authenticate('87654321')).to_not be false
   end
 
   it 'fails to update password when old password is wrong' do
@@ -41,7 +41,7 @@ RSpec.describe '#Events' do
     post '/change_password', { password: 'wrong', new_password: '87654321' },
       { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be(403)
+    expect(response.status).to be 403
   end
  
   it 'changes privacy to public' do
@@ -49,7 +49,7 @@ RSpec.describe '#Events' do
     post '/change_privacy', {},
       { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(User.last.is_private).to eq(true)
+    expect(User.last.is_private).to be true
   end
 
   it 'changes privacy to private' do
@@ -57,7 +57,7 @@ RSpec.describe '#Events' do
     post '/change_privacy', {},
       { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(User.last.is_private).to eq(false)
+    expect(User.last.is_private).to be false
   end
 
 end
