@@ -42,7 +42,7 @@ RSpec.describe '#Events' do
   it 'creator of and event adds a picture'
   it 'non-creator of an event try to add a picture'
 
-  it 'user assists to a public event' do
+  it 'assists to a public event' do
     user = FactoryGirl.create(:user)
     event = FactoryGirl.create(:event)
     event.creator.is_private = false
@@ -57,7 +57,7 @@ RSpec.describe '#Events' do
     expect(response_data["user_is_going"]).to be true
   end
 
-  it 'user assists to a private event (following the creator)' do
+  it 'assists to a private event (following the creator)' do
     user = FactoryGirl.create(:user)
     event = FactoryGirl.create(:event)
     user.change_status(event.creator, "following")
@@ -71,7 +71,7 @@ RSpec.describe '#Events' do
     expect(response_data["user_is_going"]).to be true
   end
 
-  it 'user try to assist to a private event (non-following the creator)' do
+  it 'tries to assist to a private event (non-following the creator)' do
     user = FactoryGirl.create(:user)
     event = FactoryGirl.create(:event)
 
@@ -81,7 +81,7 @@ RSpec.describe '#Events' do
     expect(response.status).to be 403
   end
 
-  it 'user quits from an event' do
+  it 'quits from an event' do
     user = FactoryGirl.create(:user)
     event = FactoryGirl.create(:event)
     user.change_status(event.creator, "following")

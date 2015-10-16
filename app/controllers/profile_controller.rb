@@ -51,7 +51,6 @@ class ProfileController < ApplicationController
 	# POST /toggle_follow/:id
 	def toggle_follow
 		user = set_user
-		can_see_events = "unchanged"
 
 		if @current_user.following?(user) || @current_user.requested?(user)
 			can_see_events = false if user.is_private?
@@ -59,6 +58,7 @@ class ProfileController < ApplicationController
 			render json: { status: "unfollowed", can_see_events: can_see_events }, status: 200
 		else
 			status = user.is_public? ? "following" : "requested" 
+			can_see_events = status.eql?("following") ? true : false
 			@current_user.change_status(user, status)
 			render json: { status: status, can_see_events: can_see_events }, status: 200
 		end

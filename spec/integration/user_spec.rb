@@ -1,12 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe '#Events' do
-  # The feeds should display correctly. This is the test
-  it 'creates an user with email'
-  it 'creates an user with facebook'
+
+  before(:each) do
+    @user = FactoryGirl.create(:user)
+  end
+
+  context 'creates an user' do
+    it 'with email'
+    it 'with facebook'
+  end
 
   it 'updates an user' do
-    user = FactoryGirl.create(:user)
     data = {
       email: 'edited@email.com',
       name: 'Edited',
@@ -15,7 +20,8 @@ RSpec.describe '#Events' do
       bio: "Edited bio"
     }
 
-    patch '/edit_profile', { user: data }, { "Authorization" => "Token token=#{user.auth_token}" }
+    patch '/edit_profile', { user: data },
+      { "Authorization" => "Token token=#{@user.auth_token}" }
 
     expect(response.status).to be 204
 
@@ -28,36 +34,38 @@ RSpec.describe '#Events' do
 
   it 'deletes an user'
  
-  it 'updates password successfully' do
-    user = FactoryGirl.create(:user)
-    post '/change_password', { password: '12345678', new_password: '87654321' }, { "Authorization" => "Token token=#{user.auth_token}" }
+  context 'when updating password' do
+    it 'updates succesfully' do
+      post '/change_password', { password: '12345678', new_password: '87654321' },
+        { "Authorization" => "Token token=#{@user.auth_token}" }
 
-    expect(response.status).to be 204
-    expect(User.last.authenticate('87654321')).to_not be false
+      expect(response.status).to be 204
+      expect(User.last.authenticate('87654321')).to_not be false
+    end
+  
+    it 'fails to update when old password is wrong' do
+      post '/change_password', { password: 'wrong', new_password: '87654321' },
+        { "Authorization" => "Token token=#{@user.auth_token}" }
+
+      expect(response.status).to be 403
+    end
   end
 
-  it 'fails to update password when old password is wrong' do
-    user = FactoryGirl.create(:user)
-    post '/change_password', { password: 'wrong', new_password: '87654321' },
-      { "Authorization" => "Token token=#{user.auth_token}" }
+  context 'changes privacy' do
+    it 'to public' do
+      user = FactoryGirl.create(:user, is_private: false)
+      post '/change_privacy', {},
+        { "Authorization" => "Token token=#{user.auth_token}" }
 
-    expect(response.status).to be 403
+      expect(User.last.is_private).to be true
+    end
+
+    it 'to private' do
+      user = FactoryGirl.create(:user, is_private: true)
+      post '/change_privacy', {},
+        { "Authorization" => "Token token=#{user.auth_token}" }
+
+      expect(User.last.is_private).to be false
+    end
   end
- 
-  it 'changes privacy to public' do
-    user = FactoryGirl.create(:user, is_private: false)
-    post '/change_privacy', {},
-      { "Authorization" => "Token token=#{user.auth_token}" }
-
-    expect(User.last.is_private).to be true
-  end
-
-  it 'changes privacy to private' do
-    user = FactoryGirl.create(:user, is_private: true)
-    post '/change_privacy', {},
-      { "Authorization" => "Token token=#{user.auth_token}" }
-
-    expect(User.last.is_private).to be false
-  end
-
 end
